@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,9 +11,10 @@ import (
 
 func Authentication(tokenGenerator *tokens.TokenGenrator) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Println("Running Authentication Middleware")
 		ClientToken := c.Request.Header.Get("token")
 		if ClientToken == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "No Authorization Header Provided"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization Header (`token`) not provided"})
 			c.Abort()
 			return
 		}

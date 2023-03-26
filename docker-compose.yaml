@@ -1,8 +1,22 @@
-version: '3.1'
+version: '3.9'
 
 services:
 
   mongo:
-    image: mongo:latest
+    image: mongo:6
+    container_name: mongodb
     ports:
       - 27017:27017
+    volumes:
+      - ~/mongodb/database/Ecommerce:/data/db
+
+  app:
+    build:
+      dockerfile: Dockerfile
+    container_name: ecommerce
+    ports:
+      - 8181:8181
+    environment:
+      - DB_URL=mongo
+    depends_on:
+      - mongo

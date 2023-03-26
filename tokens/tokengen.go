@@ -23,8 +23,6 @@ type SignedDetails struct {
 	StandardClaims jwt.StandardClaims
 }
 
-var UserData = database.UserData(database.Client, "Users")
-
 var SECRET_KEY = os.Getenv("SECRET_KEY")
 
 func (s *SignedDetails) Valid() error {
@@ -32,7 +30,17 @@ func (s *SignedDetails) Valid() error {
 	return nil
 }
 
-func TokenGenerator(email, firstName, lastName, uuid string) (signedToken string, signedRefreshToken string, err error) {
+type TokenGenrator struct {
+	dbClient *database.DBClient
+}
+
+func NewTokenGenerator(dbClient *database.DBClient) *TokenGenrator {
+	return &TokenGenrator{
+		dbClient: dbClient,
+	}
+}
+
+func (t *TokenGenrator) TokenGenerator(email, firstName, lastName, uuid string) (signedToken string, signedRefreshToken string, err error) {
 
 	claims := &SignedDetails{
 		Email:     email,
@@ -63,7 +71,7 @@ func TokenGenerator(email, firstName, lastName, uuid string) (signedToken string
 	return token, refreshToken, err
 }
 
-func ValidateToken(signedtoken string) (claims *SignedDetails, msg string) {
+func (t *TokenGenrator) ValidateToken(signedtoken string) (claims *SignedDetails, msg string) {
 
 	token, err := jwt.ParseWithClaims(signedtoken, &SignedDetails{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(SECRET_KEY), nil
@@ -86,7 +94,7 @@ func ValidateToken(signedtoken string) (claims *SignedDetails, msg string) {
 	return claims, msg
 }
 
-func UpdateAllTokens(signedtoken, signedrefreshtoken, userid string) {
+func (t *TokenGenrator) UpdateAllTokens(signedtoken, signedrefreshtoken, user_id string) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
@@ -97,15 +105,13 @@ func UpdateAllTokens(signedtoken, signedrefreshtoken, userid string) {
 	updated_at, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	updateobj = append(updateobj, bson.E{Key: "updated_at", Value: updated_at})
 	upsert := true
-	filter := bson.M{"user_id": userid}
+	filter := bson.M{"user_id": user_id}
 	opt := options.UpdateOptions{
 		Upsert: &upsert,
 	}
 
-	_, err := UserData.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateobj}}, &opt)
+	err := t.dbClient.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateobj}}, opt)
 	if err != nil {
 		log.Panic(err)
-		return
 	}
-
 }

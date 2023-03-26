@@ -8,7 +8,7 @@ import (
 	"github.com/mayuka-c/e-commerce-site/tokens"
 )
 
-func Authentication() gin.HandlerFunc {
+func Authentication(tokenGenerator *tokens.TokenGenrator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ClientToken := c.Request.Header.Get("token")
 		if ClientToken == "" {
@@ -17,7 +17,7 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 
-		claims, err := tokens.ValidateToken(ClientToken)
+		claims, err := tokenGenerator.ValidateToken(ClientToken)
 		if err != "" {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 			c.Abort()

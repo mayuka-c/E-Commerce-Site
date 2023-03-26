@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"strconv"
 
@@ -11,29 +12,36 @@ import (
 	"github.com/mayuka-c/e-commerce-site/database"
 	"github.com/mayuka-c/e-commerce-site/middleware"
 	"github.com/mayuka-c/e-commerce-site/routes"
+	"github.com/mayuka-c/e-commerce-site/tokens"
 )
 
-func main() {
-	var serviceConfig config.ServiceConfig
+var (
+	ctx = context.Background()
+)
 
-	app := controllers.NewApplication(database.ProductData(database.Client, "Products"), database.UserData(database.Client, "Users"))
+var serviceConfig config.ServiceConfig
+var dbConfig config.DBConfig
+
+func init() {
+	serviceConfig = config.GetServiceConfig(ctx)
+	dbConfig = config.GetDBConfig(ctx)
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
+}
+
+func main() {
+
+	dbClient := database.DBSet(dbConfig)
+	tokenGenerator := tokens.NewTokenGenerator(dbClient)
+	app := controllers.NewApplication(dbClient, tokenGenerator)
 
 	router := gin.New()
 	router.Use(gin.Logger())
 
-	routes.UserRoutes(router)
-	router.Use(middleware.Authentication())
+	routes.UserRoutes(router, app)
+	router.Use(middleware.Authentication(tokenGenerator))
 
-	router.GET("/addtocart", app.AddToCart())
-	router.GET("/removeitem", app.RemoveItemFromCart())
-	router.GET("/listcart", app.GetItemFromCart())
-	router.GET("/cartcheckout", app.BuyFromCart())
-	router.GET("/instantbuy", app.InstantBuy())
-
-	router.POST("/addaddress", controllers.AddAddress())
-	router.PUT("/edithomeaddress", controllers.EditHomeAddress())
-	router.PUT("/editworkaddress", controllers.EditWorkAddress())
-	router.DELETE("/deleteaddresses", controllers.DeleteAddress())
+	routes.ProductRoutes(router, app)
+	routes.AddressRoutes(router, app)
 
 	log.Println("E-commerce is running at port: ", serviceConfig.APIPort)
 	log.Fatal(router.Run(":" + strconv.Itoa(serviceConfig.APIPort)))

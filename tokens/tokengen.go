@@ -2,7 +2,6 @@ package tokens
 
 import (
 	"context"
-	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,19 +15,14 @@ import (
 )
 
 type SignedDetails struct {
-	Email          string
-	FirstName      string
-	LastName       string
-	UUID           string
-	StandardClaims jwt.StandardClaims
+	Email     string
+	FirstName string
+	LastName  string
+	UUID      string
+	jwt.StandardClaims
 }
 
-var SECRET_KEY = os.Getenv("SECRET_KEY")
-
-func (s *SignedDetails) Valid() error {
-	log.Println("Valid!")
-	return nil
-}
+var JWT_Key = "my_secret_value"
 
 type TokenGenrator struct {
 	dbClient *database.DBClient
@@ -58,12 +52,12 @@ func (t *TokenGenrator) TokenGenerator(email, firstName, lastName, uuid string) 
 		},
 	}
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(SECRET_KEY))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(JWT_Key))
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(SECRET_KEY))
+	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(JWT_Key))
 	if err != nil {
 		return "", "", err
 	}
@@ -73,17 +67,18 @@ func (t *TokenGenrator) TokenGenerator(email, firstName, lastName, uuid string) 
 
 func (t *TokenGenrator) ValidateToken(signedtoken string) (claims *SignedDetails, msg string) {
 
-	token, err := jwt.ParseWithClaims(signedtoken, &SignedDetails{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
+	claims = &SignedDetails{}
+
+	token, err := jwt.ParseWithClaims(signedtoken, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(JWT_Key), nil
 	})
 	if err != nil {
 		msg = err.Error()
 		return
 	}
 
-	claims, ok := token.Claims.(*SignedDetails)
-	if !ok {
-		msg = "The Token is invalid"
+	if !token.Valid {
+		msg = "unauthorized access"
 		return
 	}
 
@@ -91,6 +86,7 @@ func (t *TokenGenrator) ValidateToken(signedtoken string) (claims *SignedDetails
 		msg = "token is expired"
 		return
 	}
+
 	return claims, msg
 }
 

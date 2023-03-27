@@ -124,7 +124,7 @@ func (app *Application) GetItemFromCart() gin.HandlerFunc {
 			return
 		}
 
-		c.IndentedJSON(http.StatusOK, gin.H{"result": result, "totalPrice": totalPrice})
+		c.IndentedJSON(http.StatusOK, gin.H{"result": result.UserCart, "totalPrice": totalPrice})
 	}
 }
 
@@ -154,7 +154,7 @@ func (app *Application) BuyFromCart() gin.HandlerFunc {
 			return
 		}
 
-		c.IndentedJSON(http.StatusOK, gin.H{"msg": "Successfully placed the order"})
+		c.IndentedJSON(http.StatusOK, gin.H{"msg": "Successfully placed the order!"})
 	}
 }
 

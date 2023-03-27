@@ -1,0 +1,428 @@
+{
+	"info": {
+		"_postman_id": "9316828b-a38d-4730-b5fc-1257776b2b6e",
+		"name": "E-commerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"Mayuka\",\r\n    \"last_name\": \"Channankaiah\",\r\n    \"password\": \"mayuka\",\r\n    \"email\": \"maryuka1999@gmail.com\",\r\n    \"phone\": \"9742117728\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/users/signup",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"signup"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"Mayuka\",\r\n    \"last_name\": \"Channankaiah\",\r\n    \"password\": \"mayuka\",\r\n    \"email\": \"maryuka1999@gmail.com\",\r\n    \"phone\": \"9742117728\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/users/login",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Add Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"product_name\": \"Maggi\",\r\n    \"price\": 20,\r\n    \"rating\": 3,\r\n    \"image\": \"maggi\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/admin/addproduct",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"admin",
+						"addproduct"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Product List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/users/productview",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"productview"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search product by name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/users/search?name=Maggi",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"users",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Maggi"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add to Cart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/addtocart?id=6421abe33120e12c26a94e07&userID=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"addtocart"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "6421abe33120e12c26a94e07"
+						},
+						{
+							"key": "userID",
+							"value": "64219d7331cc7ca27bfc3acc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Item from Cart",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/removeitem",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"removeitem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List items in Cart",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/listcart?userID=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"listcart"
+					],
+					"query": [
+						{
+							"key": "userID",
+							"value": "64219d7331cc7ca27bfc3acc"
+						},
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Checkout Cart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/cartcheckout?userID=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"cartcheckout"
+					],
+					"query": [
+						{
+							"key": "userID",
+							"value": "64219d7331cc7ca27bfc3acc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Instant Buy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/instantbuy?id=6421abf73120e12c26a94e08&userID=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"instantbuy"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "6421abf73120e12c26a94e08"
+						},
+						{
+							"key": "userID",
+							"value": "64219d7331cc7ca27bfc3acc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Address",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"house_name\": \"906\",\r\n    \"street_name\": \"Jayanagar\",\r\n    \"city_name\": \"Bangalore\",\r\n    \"pin_code\": \"560069\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/addaddress?id=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"addaddress"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64219d7331cc7ca27bfc3acc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Home Address",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"house_name\": \"906\",\r\n    \"street_name\": \"Jayanagar\",\r\n    \"city_name\": \"Mysore\",\r\n    \"pin_code\": \"560069\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/edithomeaddress?id=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"edithomeaddress"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64219d7331cc7ca27bfc3acc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Work Address",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"house_name\": \"906\",\r\n    \"street_name\": \"Jayanagar\",\r\n    \"city_name\": \"Dharwad\",\r\n    \"pin_code\": \"560069\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/editworkaddress?id=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"editworkaddress"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64219d7331cc7ca27bfc3acc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Addresses",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{TOKEN}}",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{URL}}/deleteaddresses?id=64219d7331cc7ca27bfc3acc",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"deleteaddresses"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "64219d7331cc7ca27bfc3acc"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

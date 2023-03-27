@@ -22,7 +22,11 @@ func Authentication(tokenGenerator *tokens.TokenGenrator) gin.HandlerFunc {
 		claims, err := tokenGenerator.ValidateToken(ClientToken)
 		if err != "" {
 			log.Error(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			if err == "unauthorized access" {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": err})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			}
 			c.Abort()
 			return
 		}

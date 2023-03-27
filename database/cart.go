@@ -59,10 +59,10 @@ func (d *DBClient) RemoveCartItem(ctx context.Context, product_id, user_id primi
 	return nil
 }
 
-func (d *DBClient) GetItemFromCart(ctx context.Context, user_id primitive.ObjectID) (models.User, string, error) {
+func (d *DBClient) GetItemFromCart(ctx context.Context, user_id primitive.ObjectID) (models.User, int32, error) {
 
 	var filledCart models.User
-	var totalPrice string
+	var totalPrice int32
 
 	err := d.userCollection.FindOne(ctx, bson.D{{Key: "_id", Value: user_id}}).Decode(&filledCart)
 	if err != nil {
@@ -85,7 +85,7 @@ func (d *DBClient) GetItemFromCart(ctx context.Context, user_id primitive.Object
 	}
 
 	for _, json := range listing {
-		totalPrice = json["total"].(string)
+		totalPrice = json["total"].(int32)
 	}
 
 	return filledCart, totalPrice, nil
@@ -137,7 +137,7 @@ func (d *DBClient) BuyItemFromCart(ctx context.Context, user_id primitive.Object
 	}
 
 	filter2 := bson.D{{Key: "_id", Value: user_id}}
-	update2 := bson.M{"$push": bson.M{"orders.order_list": bson.M{"$each": getCartItems.UserCart}}}
+	update2 := bson.M{"$push": bson.M{"orders.$[].order_list": bson.M{"$each": getCartItems.UserCart}}}
 
 	_, err = d.userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {
@@ -181,7 +181,7 @@ func (d *DBClient) InstantBuyer(ctx context.Context, product_id, user_id primiti
 	}
 
 	filter2 := bson.D{{Key: "_id", Value: user_id}}
-	update2 := bson.M{"$push": bson.M{"orders.order_list": product_details}}
+	update2 := bson.M{"$push": bson.M{"orders.$[].order_list": product_details}}
 
 	_, err = d.userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {

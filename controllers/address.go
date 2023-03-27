@@ -18,7 +18,7 @@ func (app *Application) AddAddress() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := c.Query("id")
 		if userId == "" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user id not passed in query"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "user id not passed in query"})
 			c.Abort()
 			return
 		}
@@ -46,7 +46,7 @@ func (app *Application) AddAddress() gin.HandlerFunc {
 		if err != nil {
 			log.Error(err)
 			if err == database.ErrAddAddress {
-				c.IndentedJSON(http.StatusNotAcceptable, gin.H{"msg": database.ErrAddAddress})
+				c.IndentedJSON(http.StatusNotAcceptable, gin.H{"msg": database.ErrAddAddress.Error()})
 			} else {
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
@@ -61,7 +61,7 @@ func (app *Application) EditHomeAddress() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := c.Query("id")
 		if userId == "" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user id not passed in query"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "user id not passed in query"})
 			return
 		}
 
@@ -97,7 +97,7 @@ func (app *Application) EditWorkAddress() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := c.Query("id")
 		if userId == "" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user id not passed in query"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "user id not passed in query"})
 			return
 		}
 
@@ -133,7 +133,7 @@ func (app *Application) DeleteAddress() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := c.Query("id")
 		if userId == "" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user id not passed in query"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "user id not passed in query"})
 			return
 		}
 

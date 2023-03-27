@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"log"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mayuka-c/e-commerce-site/config"
 	"github.com/mayuka-c/e-commerce-site/controllers"
@@ -25,7 +25,6 @@ var dbConfig config.DBConfig
 func init() {
 	serviceConfig = config.GetServiceConfig(ctx)
 	dbConfig = config.GetDBConfig(ctx)
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
 }
 
 func main() {

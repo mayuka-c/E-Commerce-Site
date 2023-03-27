@@ -27,10 +27,10 @@ type User struct {
 // Product collection
 type Product struct {
 	Product_ID   primitive.ObjectID `bson:"_id"`
-	Product_Name *string            `json:"product_name"`
-	Price        *uint64            `json:"price"`
-	Rating       *uint8             `json:"rating"`
-	Image        *string            `json:"image"`
+	Product_Name *string            `json:"product_name" validate:"required"`
+	Price        *uint64            `json:"price" validate:"required"`
+	Rating       *uint8             `json:"rating" validate:"required"`
+	Image        *string            `json:"image" validate:"required"`
 }
 
 // Used for usercart

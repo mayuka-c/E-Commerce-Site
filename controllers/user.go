@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mayuka-c/e-commerce-site/models"
 )
@@ -49,40 +49,40 @@ func (app *Application) SignUp() gin.HandlerFunc {
 		var user models.User
 		err := c.BindJSON(&user)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		validationErr := Validate.Struct(user)
 		if validationErr != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
 			return
 		}
 
-		count, err := app.dbClient.CountDocuments(ctx, bson.M{"email": user.Email})
+		count, err := app.dbClient.CountDocuments(ctx, app.dbClient.GetUserCollection(), bson.M{"email": user.Email})
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
 		if count > 0 {
-			log.Fatalln("User already exist with provided email")
+			log.Error("User already exist with provided email")
 			c.JSON(http.StatusBadRequest, gin.H{"error": "user already exist with provided email"})
 			return
 		}
 
-		count, err = app.dbClient.CountDocuments(ctx, bson.M{"phone": user.Phone})
+		count, err = app.dbClient.CountDocuments(ctx, app.dbClient.GetUserCollection(), bson.M{"phone": user.Phone})
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
 		if count > 0 {
-			log.Fatalln("Provided phone number is already in use")
+			log.Error("Provided phone number is already in use")
 			c.JSON(http.StatusBadRequest, gin.H{"error": "this phone number is already in use"})
 			return
 		}
@@ -105,9 +105,9 @@ func (app *Application) SignUp() gin.HandlerFunc {
 		user.Address_Details = make([]models.Address, 0)
 		user.Order_Status = make([]models.Order, 0)
 
-		err = app.dbClient.InsertOne(ctx, user)
+		err = app.dbClient.InsertOne(ctx, app.dbClient.GetUserCollection(), user)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "the user did not get created"})
 			return
 		}
@@ -124,22 +124,22 @@ func (app *Application) Login() gin.HandlerFunc {
 		var user models.User
 		err := c.BindJSON(&user)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		var founduser models.User
-		err = app.dbClient.FindOne(ctx, bson.M{"email": user.Email}).Decode(&founduser)
+		err = app.dbClient.FindOne(ctx, app.dbClient.GetUserCollection(), bson.M{"email": user.Email}).Decode(&founduser)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "login is incorrect"})
 			return
 		}
 
 		PasswordIsValid, msg := verifyPassword(*user.Password, *founduser.Password)
 		if !PasswordIsValid {
-			log.Fatalln(msg)
+			log.Error(msg)
 			c.JSON(http.StatusBadRequest, gin.H{"error": msg})
 			return
 		}
@@ -160,15 +160,15 @@ func (app *Application) ProductViewerAdmin() gin.HandlerFunc {
 		var products models.Product
 
 		if err := c.BindJSON(&products); err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		products.Product_ID = primitive.NewObjectID()
-		err := app.dbClient.InsertOne(ctx, products)
+		err := app.dbClient.InsertOne(ctx, app.dbClient.GetProductCollection(), products)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Not Created"})
 			return
 		}
@@ -184,7 +184,7 @@ func (app *Application) SearchProducts() gin.HandlerFunc {
 
 		productList, err := app.dbClient.SearchProducts(ctx)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -207,7 +207,7 @@ func (app *Application) SearchProductsByQuery() gin.HandlerFunc {
 
 		productList, err := app.dbClient.SearchProductsByQuery(ctx, productName)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}

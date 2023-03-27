@@ -15,11 +15,11 @@ func UserRoutes(incomingRoutes *gin.Engine, handler *controllers.Application) {
 }
 
 func ProductRoutes(incomingRoutes *gin.Engine, handler *controllers.Application) {
-	incomingRoutes.GET("/addtocart", handler.AddToCart())
-	incomingRoutes.GET("/removeitem", handler.RemoveItemFromCart())
+	incomingRoutes.POST("/addtocart", handler.AddToCart())
+	incomingRoutes.DELETE("/removeitem", handler.RemoveItemFromCart())
 	incomingRoutes.GET("/listcart", handler.GetItemFromCart())
-	incomingRoutes.GET("/cartcheckout", handler.BuyFromCart())
-	incomingRoutes.GET("/instantbuy", handler.InstantBuy())
+	incomingRoutes.POST("/cartcheckout", handler.BuyFromCart())
+	incomingRoutes.POST("/instantbuy", handler.InstantBuy())
 }
 
 func AddressRoutes(incomingRoutes *gin.Engine, handler *controllers.Application) {

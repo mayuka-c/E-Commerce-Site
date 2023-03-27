@@ -2,11 +2,12 @@ package database
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mayuka-c/e-commerce-site/config"
 	"github.com/mayuka-c/e-commerce-site/constants"
@@ -48,4 +49,12 @@ func DBSet(dbConfig config.DBConfig) *DBClient {
 		userCollection:    userCollection,
 		productCollection: productCollection,
 	}
+}
+
+func (d *DBClient) GetUserCollection() *mongo.Collection {
+	return d.userCollection
+}
+
+func (d *DBClient) GetProductCollection() *mongo.Collection {
+	return d.productCollection
 }

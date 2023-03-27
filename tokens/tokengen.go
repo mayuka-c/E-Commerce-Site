@@ -2,7 +2,6 @@ package tokens
 
 import (
 	"context"
-	"log"
 	"os"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mayuka-c/e-commerce-site/database"
 )
@@ -110,7 +110,7 @@ func (t *TokenGenrator) UpdateAllTokens(signedtoken, signedrefreshtoken, user_id
 		Upsert: &upsert,
 	}
 
-	err := t.dbClient.UpdateOne(ctx, filter, bson.D{{Key: "$set", Value: updateobj}}, opt)
+	err := t.dbClient.UpdateOne(ctx, t.dbClient.GetUserCollection(), filter, bson.D{{Key: "$set", Value: updateobj}}, opt)
 	if err != nil {
 		log.Panic(err)
 	}

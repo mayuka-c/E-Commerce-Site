@@ -2,13 +2,13 @@ package controllers
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/mayuka-c/e-commerce-site/database"
 	"github.com/mayuka-c/e-commerce-site/models"
@@ -27,14 +27,14 @@ func (app *Application) AddAddress() gin.HandlerFunc {
 		address.Address_ID = primitive.NewObjectID()
 
 		if err := c.BindJSON(&address); err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userId)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -44,7 +44,7 @@ func (app *Application) AddAddress() gin.HandlerFunc {
 
 		err = app.dbClient.AddAddress(ctx, user_id, address)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			if err == database.ErrAddAddress {
 				c.IndentedJSON(http.StatusNotAcceptable, gin.H{"msg": database.ErrAddAddress})
 			} else {
@@ -67,14 +67,14 @@ func (app *Application) EditHomeAddress() gin.HandlerFunc {
 
 		var editaddress models.Address
 		if err := c.BindJSON(&editaddress); err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userId)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -84,7 +84,7 @@ func (app *Application) EditHomeAddress() gin.HandlerFunc {
 
 		app.dbClient.EditHomeAddress(ctx, user_id, editaddress)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -103,14 +103,14 @@ func (app *Application) EditWorkAddress() gin.HandlerFunc {
 
 		var editaddress models.Address
 		if err := c.BindJSON(&editaddress); err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userId)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -139,7 +139,7 @@ func (app *Application) DeleteAddress() gin.HandlerFunc {
 
 		user_id, err := primitive.ObjectIDFromHex(userId)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -149,7 +149,7 @@ func (app *Application) DeleteAddress() gin.HandlerFunc {
 
 		app.dbClient.DeleteAddress(ctx, user_id)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}

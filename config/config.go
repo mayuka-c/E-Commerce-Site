@@ -2,9 +2,9 @@ package config
 
 import (
 	"context"
-	"log"
 
 	"github.com/kelseyhightower/envconfig"
+	log "github.com/sirupsen/logrus"
 )
 
 type ServiceConfig struct {

@@ -2,41 +2,41 @@ package controllers
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 func (app *Application) AddToCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		productQueryID := c.Query("id")
 		if productQueryID == "" {
-			log.Fatalln("Product ID is empty")
+			log.Error("Product ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "product id is empty"})
 			return
 		}
 
 		userQueryID := c.Query("userID")
 		if userQueryID == "" {
-			log.Fatalln("User ID is empty")
+			log.Error("User ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "user id is empty"})
 			return
 		}
 
 		product_id, err := primitive.ObjectIDFromHex(productQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "productID provided is invalid"})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -46,7 +46,7 @@ func (app *Application) AddToCart() gin.HandlerFunc {
 
 		err = app.dbClient.AddProductToCart(ctx, product_id, user_id)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -59,28 +59,28 @@ func (app *Application) RemoveItemFromCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		productQueryID := c.Query("id")
 		if productQueryID == "" {
-			log.Fatalln("Product ID is empty")
+			log.Error("Product ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "product id is empty"})
 			return
 		}
 
 		userQueryID := c.Query("userID")
 		if userQueryID == "" {
-			log.Fatalln("User ID is empty")
+			log.Error("User ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "user id is empty"})
 			return
 		}
 
 		product_id, err := primitive.ObjectIDFromHex(productQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "productID provided is invalid"})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -102,14 +102,14 @@ func (app *Application) GetItemFromCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userQueryID := c.Query("userID")
 		if userQueryID == "" {
-			log.Fatalln("User ID is empty")
+			log.Error("User ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "user id is empty"})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -119,7 +119,7 @@ func (app *Application) GetItemFromCart() gin.HandlerFunc {
 
 		result, totalPrice, err := app.dbClient.GetItemFromCart(ctx, user_id)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -132,14 +132,14 @@ func (app *Application) BuyFromCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userQueryID := c.Query("userID")
 		if userQueryID == "" {
-			log.Fatalln("User ID is empty")
+			log.Error("User ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "user id is empty"})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -149,7 +149,7 @@ func (app *Application) BuyFromCart() gin.HandlerFunc {
 
 		err = app.dbClient.BuyItemFromCart(ctx, user_id)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
@@ -162,28 +162,28 @@ func (app *Application) InstantBuy() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		productQueryID := c.Query("id")
 		if productQueryID == "" {
-			log.Fatalln("Product ID is empty")
+			log.Error("Product ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "product id is empty"})
 			return
 		}
 
 		userQueryID := c.Query("userID")
 		if userQueryID == "" {
-			log.Fatalln("User ID is empty")
+			log.Error("User ID is empty")
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "user id is empty"})
 			return
 		}
 
 		product_id, err := primitive.ObjectIDFromHex(productQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "productID provided is invalid"})
 			return
 		}
 
 		user_id, err := primitive.ObjectIDFromHex(userQueryID)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusExpectationFailed, gin.H{"error": "userID provided is invalid"})
 			return
 		}
@@ -193,7 +193,7 @@ func (app *Application) InstantBuy() gin.HandlerFunc {
 
 		err = app.dbClient.InstantBuyer(ctx, product_id, user_id)
 		if err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}

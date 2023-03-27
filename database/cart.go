@@ -48,7 +48,7 @@ func (d *DBClient) AddProductToCart(ctx context.Context, product_id, user_id pri
 
 func (d *DBClient) RemoveCartItem(ctx context.Context, product_id, user_id primitive.ObjectID) error {
 
-	filter := bson.D{primitive.E{Key: "_id", Value: user_id}}
+	filter := bson.D{{Key: "_id", Value: user_id}}
 	update := bson.M{"$pull": bson.M{"usercart": bson.M{"_id": product_id}}}
 
 	_, err := d.userCollection.UpdateMany(ctx, filter, update)
@@ -64,14 +64,14 @@ func (d *DBClient) GetItemFromCart(ctx context.Context, user_id primitive.Object
 	var filledCart models.User
 	var totalPrice string
 
-	err := d.userCollection.FindOne(ctx, bson.D{primitive.E{Key: "_id", Value: user_id}}).Decode(&filledCart)
+	err := d.userCollection.FindOne(ctx, bson.D{{Key: "_id", Value: user_id}}).Decode(&filledCart)
 	if err != nil {
 		return filledCart, totalPrice, err
 	}
 
-	filter_match := bson.D{{Key: "$match", Value: bson.D{primitive.E{Key: "_id", Value: user_id}}}}
-	unwind := bson.D{{Key: "$unwind", Value: bson.D{primitive.E{Key: "path", Value: "$usercart"}}}}
-	grouping := bson.D{{Key: "$group", Value: bson.D{primitive.E{Key: "_id", Value: "$_id"}, {Key: "total", Value: bson.D{primitive.E{Key: "$sum", Value: "$usercart.price"}}}}}}
+	filter_match := bson.D{{Key: "$match", Value: bson.D{{Key: "_id", Value: user_id}}}}
+	unwind := bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$usercart"}}}}
+	grouping := bson.D{{Key: "$group", Value: bson.D{{Key: "_id", Value: "$_id"}, {Key: "total", Value: bson.D{{Key: "$sum", Value: "$usercart.price"}}}}}}
 
 	pointCursor, err := d.userCollection.Aggregate(ctx, mongo.Pipeline{filter_match, unwind, grouping})
 	if err != nil {
@@ -93,52 +93,51 @@ func (d *DBClient) GetItemFromCart(ctx context.Context, user_id primitive.Object
 
 func (d *DBClient) BuyItemFromCart(ctx context.Context, user_id primitive.ObjectID) error {
 
-	var getcartitems models.User
-	var ordercart models.Order
+	var getCartItems models.User
+	var orderCart models.Order
 
-	ordercart.Order_ID = primitive.NewObjectID()
-	ordercart.Ordered_At = time.Now()
-	ordercart.Order_Cart = make([]models.ProductUser, 0)
-	ordercart.Payment_Method.CashOnDelivery = true
+	orderCart.Order_ID = primitive.NewObjectID()
+	orderCart.Ordered_At = time.Now()
+	orderCart.Order_Cart = make([]models.ProductUser, 0)
+	orderCart.Payment_Method.CashOnDelivery = true
 
-	unwind := bson.D{{Key: "$unwind", Value: bson.D{primitive.E{Key: "path", Value: "$usercart"}}}}
-	grouping := bson.D{{Key: "$group", Value: bson.D{primitive.E{Key: "_id", Value: "$_id"}, {Key: "total", Value: bson.D{primitive.E{Key: "$sum", Value: "$usercart.price"}}}}}}
+	unwind := bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$usercart"}}}}
+	grouping := bson.D{{Key: "$group", Value: bson.D{{Key: "_id", Value: "$_id"}, {Key: "total_price", Value: bson.D{{Key: "$sum", Value: "$usercart.price"}}}}}}
 
-	currentresults, err := d.userCollection.Aggregate(ctx, mongo.Pipeline{unwind, grouping})
+	totalPriceCursor, err := d.userCollection.Aggregate(ctx, mongo.Pipeline{unwind, grouping})
 	if err != nil {
 		return ErrCantBuyCartItem
 	}
 
-	var getusercart []bson.M
+	var totalPriceDoc []bson.M
 
-	if err = currentresults.All(ctx, &getusercart); err != nil {
+	if err = totalPriceCursor.All(ctx, &totalPriceDoc); err != nil {
 		return ErrCantBuyCartItem
 	}
 
 	var total_price int32
 
-	for _, user_item := range getusercart {
-		price := user_item["total"]
-		total_price = price.(int32)
+	for _, user_item := range totalPriceDoc {
+		total_price = user_item["total_price"].(int32)
 	}
 
-	ordercart.Price = int(total_price)
+	orderCart.Price = int(total_price)
 
-	filter := bson.D{primitive.E{Key: "_id", Value: user_id}}
-	update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "orders", Value: ordercart}}}}
+	filter := bson.D{{Key: "_id", Value: user_id}}
+	update := bson.D{{Key: "$push", Value: bson.D{{Key: "orders", Value: orderCart}}}}
 
-	_, err = d.userCollection.UpdateMany(ctx, filter, update)
+	_, err = d.userCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return ErrCantBuyCartItem
 	}
 
-	err = d.userCollection.FindOne(ctx, bson.D{primitive.E{Key: "_id", Value: user_id}}).Decode(&getcartitems)
+	err = d.userCollection.FindOne(ctx, bson.D{{Key: "_id", Value: user_id}}).Decode(&getCartItems)
 	if err != nil {
 		return ErrCantBuyCartItem
 	}
 
-	filter2 := bson.D{primitive.E{Key: "_id", Value: user_id}}
-	update2 := bson.M{"$push": bson.M{"orders.$[].order_list": bson.M{"$each": getcartitems.UserCart}}}
+	filter2 := bson.D{{Key: "_id", Value: user_id}}
+	update2 := bson.M{"$push": bson.M{"orders.order_list": bson.M{"$each": getCartItems.UserCart}}}
 
 	_, err = d.userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {
@@ -146,8 +145,8 @@ func (d *DBClient) BuyItemFromCart(ctx context.Context, user_id primitive.Object
 	}
 
 	usercart_empty := make([]models.ProductUser, 0)
-	filtered := bson.D{primitive.E{Key: "_id", Value: user_id}}
-	updated := bson.D{{Key: "$set", Value: bson.D{primitive.E{Key: "usercart", Value: usercart_empty}}}}
+	filtered := bson.D{{Key: "_id", Value: user_id}}
+	updated := bson.D{{Key: "$set", Value: bson.D{{Key: "usercart", Value: usercart_empty}}}}
 
 	_, err = d.userCollection.UpdateOne(ctx, filtered, updated)
 	if err != nil {
@@ -167,22 +166,22 @@ func (d *DBClient) InstantBuyer(ctx context.Context, product_id, user_id primiti
 	orders_detail.Order_Cart = make([]models.ProductUser, 0)
 	orders_detail.Payment_Method.CashOnDelivery = true
 
-	err := d.productCollection.FindOne(ctx, bson.D{primitive.E{Key: "_id", Value: product_id}}).Decode(&product_details)
+	err := d.productCollection.FindOne(ctx, bson.D{{Key: "_id", Value: product_id}}).Decode(&product_details)
 	if err != nil {
 		return ErrCantDoInstantBuyer
 	}
 
 	orders_detail.Price = product_details.Price
-	filter := bson.D{primitive.E{Key: "_id", Value: user_id}}
-	update := bson.D{{Key: "$push", Value: bson.D{primitive.E{Key: "orders", Value: orders_detail}}}}
+	filter := bson.D{{Key: "_id", Value: user_id}}
+	update := bson.D{{Key: "$push", Value: bson.D{{Key: "orders", Value: orders_detail}}}}
 
 	_, err = d.userCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return ErrCantDoInstantBuyer
 	}
 
-	filter2 := bson.D{primitive.E{Key: "_id", Value: user_id}}
-	update2 := bson.M{"$push": bson.M{"orders.$[].order_list": product_details}}
+	filter2 := bson.D{{Key: "_id", Value: user_id}}
+	update2 := bson.M{"$push": bson.M{"orders.order_list": product_details}}
 
 	_, err = d.userCollection.UpdateOne(ctx, filter2, update2)
 	if err != nil {

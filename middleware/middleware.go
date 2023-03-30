@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mayuka-c/e-commerce-site/tokens"
+	"github.com/mayuka-c/e-commerce/tokens"
 )
 
 func Authentication(tokenGenerator *tokens.TokenGenrator) gin.HandlerFunc {

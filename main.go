@@ -7,12 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mayuka-c/e-commerce-site/config"
-	"github.com/mayuka-c/e-commerce-site/controllers"
-	"github.com/mayuka-c/e-commerce-site/database"
-	"github.com/mayuka-c/e-commerce-site/middleware"
-	"github.com/mayuka-c/e-commerce-site/routes"
-	"github.com/mayuka-c/e-commerce-site/tokens"
+	"github.com/mayuka-c/e-commerce/config"
+	"github.com/mayuka-c/e-commerce/controllers"
+	"github.com/mayuka-c/e-commerce/database"
+	"github.com/mayuka-c/e-commerce/middleware"
+	"github.com/mayuka-c/e-commerce/routes"
+	"github.com/mayuka-c/e-commerce/tokens"
 )
 
 var (

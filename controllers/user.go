@@ -13,7 +13,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mayuka-c/e-commerce-site/models"
+	"github.com/mayuka-c/e-commerce/models"
 )
 
 var Validate = validator.New()

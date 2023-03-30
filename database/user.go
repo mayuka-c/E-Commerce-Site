@@ -5,7 +5,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"github.com/mayuka-c/e-commerce-site/models"
+	"github.com/mayuka-c/e-commerce/models"
 )
 
 func (d *DBClient) SearchProducts(ctx context.Context) ([]models.Product, error) {

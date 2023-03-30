@@ -10,3 +10,6 @@ Backend server built by using GO
 ```bash
     docker-compose up
 ```
+
+## Postman Collection
+Find the postman collection of API's under postman/ directory

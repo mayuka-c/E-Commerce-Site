@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/mayuka-c/e-commerce-site/database"
-	"github.com/mayuka-c/e-commerce-site/tokens"
+	"github.com/mayuka-c/e-commerce/database"
+	"github.com/mayuka-c/e-commerce/tokens"
 )
 
 type Application struct {

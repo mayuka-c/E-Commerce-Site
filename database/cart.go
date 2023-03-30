@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/mayuka-c/e-commerce-site/models"
+	"github.com/mayuka-c/e-commerce/models"
 )
 
 var (

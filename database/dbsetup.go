@@ -9,8 +9,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mayuka-c/e-commerce-site/config"
-	"github.com/mayuka-c/e-commerce-site/constants"
+	"github.com/mayuka-c/e-commerce/config"
+	"github.com/mayuka-c/e-commerce/constants"
 )
 
 type DBClient struct {

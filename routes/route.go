@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/mayuka-c/e-commerce-site/controllers"
+	"github.com/mayuka-c/e-commerce/controllers"
 )
 
 func UserRoutes(incomingRoutes *gin.Engine, handler *controllers.Application) {

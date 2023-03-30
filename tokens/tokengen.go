@@ -11,7 +11,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mayuka-c/e-commerce-site/database"
+	"github.com/mayuka-c/e-commerce/database"
 )
 
 type SignedDetails struct {

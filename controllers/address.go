@@ -10,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/mayuka-c/e-commerce-site/database"
-	"github.com/mayuka-c/e-commerce-site/models"
+	"github.com/mayuka-c/e-commerce/database"
+	"github.com/mayuka-c/e-commerce/models"
 )
 
 func (app *Application) AddAddress() gin.HandlerFunc {
